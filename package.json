@@ -1,0 +1,13 @@
+{
+  "name": "check-web",
+  "version": "1.0.0",
+  "description": "Check web site",
+  "devDependencies": {
+    "https": "^1.0.0",
+    "aws-sdk": ""
+  },
+  "dependencies": {
+    "https": "^1.0.0",
+    "aws-sdk": ""
+  }
+}

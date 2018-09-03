@@ -1,0 +1,54 @@
+service: check-web
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: prod
+  region: ap-northeast-1
+  role: checkWebRole
+
+package:
+  include:
+    - node_modules/** 
+  
+functions:
+  main:
+    handler: handler.main
+    events:
+      - schedule: cron(30 23 ? * MON-FRI *)
+
+resources:
+  Resources:
+    checkWebRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: checkWebRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: AmazonS3FullAccess
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - s3:*
+                  Resource: "*"
+          - PolicyName: AmazonLogWriteRole
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "logs:CreateLogGroup"
+                    - "logs:CreateLogStream"
+                    - "logs:PutLogEvents"
+                  Resource: "arn:aws:logs:*:*:*"
+
+
