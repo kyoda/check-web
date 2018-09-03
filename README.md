@@ -6,6 +6,7 @@ Checking Web Site (without RSS)
 
 + aws lambda
 + serverless framework
++ nodejs 8.10
 
 ## USAGE
 
