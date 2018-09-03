@@ -14,6 +14,14 @@ package:
 functions:
   main:
     handler: handler.main
+    environment:
+      SLACK_PATH: ${file(./env.yml):SLACK_PATH}
+      SLACK_CHANNEL: ${file(./env.yml):SLACK_CHANNEL}
+      SLACK_USERNAME: ${file(./env.yml):SLACK_USERNAME}
+      SLACK_ICON: ${file(./env.yml):SLACK_ICON}
+      S3_BUCKET: ${file(./env.yml):S3_BUCKET}
+      S3_KEY: ${file(./env.yml):S3_KEY}
+      CHECK_URL: ${file(./env.yml):CHECK_URL}
     events:
       - schedule: cron(30 23 ? * MON-FRI *)
 

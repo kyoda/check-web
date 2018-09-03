@@ -8,17 +8,16 @@ const send_message = (mes) => {
     
     let opts = {
         hostname: 'hooks.slack.com',
-        path: '/services/T02GBM3UU/B1254PD71/lu09v03GIfftvQwSrQQz8WyY',
+        path: process.env.SLACK_PATH,
         headers: { "Content-type": "application/json;" },
         method: 'POST'
     };
 
-        //channel: "@kyoda",
     const params = {
-        channel: "#aws-notification",
-        username: "Webサイト更新", 
+        channel: process.env.SLACK_CHANNEL,
+        username: process.env.SLACK_USERNAME, 
         text: mes, 
-        icon_emoji: ":robot_face:"
+        icon_emoji: process.env.SLACK_ICON
     }
 
     const req = https.request(opts, (res) => {
@@ -69,19 +68,19 @@ const check_web = async (list) => {
         // Old html
         await s3.getObject({
             Bucket: list.bucket,
-            Key: list.name
+            Key: list.key
         }).promise().then((data) => {
             old_data = data.Body.toString('utf8');
         });
 
         // Compare
         if (now_data !== old_data) {
-            send_message(list.name + 'の更新がありました。');
-            console.log("no same");
+            send_message(list.key + 'の更新がありました。');
+            console.log("distinct");
             await s3.putObject({
                 Body: now_data,
                 Bucket: list.bucket,
-                Key: list.name
+                Key: list.key
             }).promise();
         }
 
@@ -90,7 +89,7 @@ const check_web = async (list) => {
         send_message("Ooops, something went wrong...");
     }
 
-    console.log("check_web end...");
+    console.log("check_web end.");
 
 };
 
@@ -99,13 +98,12 @@ exports.main = () => {
 
     const list = [
         {
-            bucket: "syon.web-update.tmp",
-            name: "passbolt",
-            url: "https://help.passbolt.com/releases/"
+            bucket: process.env.S3_BUCKET,
+            key: process.env.S3_KEY,
+            url: process.env.CHECK_URL
         }
     ];
 
-    // lambdaの実行時間が長くなるためlistは増やしにくい
     list.forEach((val) => {
         check_web(val);
     });
